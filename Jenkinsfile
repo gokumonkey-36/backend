@@ -48,8 +48,7 @@ pipeline {
                 ssh ${DOCKER_SERVER} "
                     cd ~/backend &&
 
-                    kubectl set image deployment/backend \
-                    backend=gokumonkey/backend:${BUILD_NUMBER}
+                    kubectl apply -f deployment.yaml
                 "
                 '''
             }
