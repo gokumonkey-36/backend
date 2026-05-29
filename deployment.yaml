@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: gokumonkey/backend:3
+        image: gokumonkey/backend:5
         imagePullPolicy: Always
 
         ports:
