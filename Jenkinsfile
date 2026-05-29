@@ -5,7 +5,7 @@ pipeline {
         DOCKER_USER = "gokumonkey"
         TOKEN = "dckr_pat_vHMjHr6LEPU-5_bZln8EdQf_HzY"
         IMAGE_NAME = "backend"
-        DOCKER_SERVER = "ubuntu@13.203.105.138"
+        DOCKER_SERVER = "ubuntu@13.235.76.142"
     }
 
     stages {
