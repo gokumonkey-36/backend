@@ -20,7 +20,7 @@ pipeline {
         stage('Dependency Verification'){
             steps{
                 sh ''' 
-                pip install -r requirements.txt 
+                python pip install -r requirements.txt 
                 '''
             }
         }
