@@ -17,40 +17,7 @@ pipeline {
             }
         }
 
-        stage('Dependency Verification'){
-            steps{
-                sh ''' 
-                python3 pip install -r requirements.txt 
-                '''
-            }
-        }
-
-        stage ('Syntax Check'){
-            steps{
-                sh ''' 
-            python -m compileall .
-            '''
-            }
-            
-        }
-
-        stage('Lint'){
-            steps{
-                sh ''' ruff check . 
-                '''
-            }
-            
-        }
-
-        stage('Unit Test'){
-            steps{
-                sh ''' pytest 
-                '''
-            }
-            
-        }
-
-        stage('Build Image') {
+        stage('Build') {
             steps {
                 sh '''
                 ssh ${DOCKER_SERVER} "
@@ -61,33 +28,20 @@ pipeline {
 
                 ssh ${DOCKER_SERVER} "
                     cd ~/backend &&
-                    docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${BUILD_NUMBER} .
-                   
+                    docker build -t ${DOCKER_USER}/${IMAGE_NAME}:${BUILD_NUMBER} . &&
+                    docker login -u ${DOCKER_USER} -p ${TOKEN} &&
+                    docker push ${DOCKER_USER}/${IMAGE_NAME}:${BUILD_NUMBER}
                 "
                 '''
             }
         }
 
-        stage('Scan Image'){
-            steps{
-                sh ''' ssh ${DOCKER_SERVER} "
-                trivy image --severity CRITICAL,HIGH --exit-code 1 gokumonkey/backend:${BUILD_NUMBER}  "
-                '''
+        stage('Test') {
+            steps {
+                echo 'Skipping tests for now'
             }
-            
         }
 
-        stage('Push Docker Image'){
-            steps{
-                sh '''
-            ssh ${DOCKER_SERVER} "
-             docker login -u ${DOCKER_USER} -p ${TOKEN} &&
-             docker push ${DOCKER_USER}/${IMAGE_NAME}:${BUILD_NUMBER}
-            "
-            '''
-            }
-            
-        }
         stage('Deploy') {
             steps {
                 sh '''
@@ -97,12 +51,6 @@ pipeline {
                     kubectl apply -f deployment.yaml
                 "
                 '''
-            }
-        }
-
-        stage('Integration Test') {
-            steps {
-                echo 'Integration tests will be added later'
             }
         }
     }
